@@ -1,0 +1,19 @@
+<head>
+    <meta charset="UTF-8">
+    <title>Options Strategy</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <h1>Create Option Strategy</h1>
+    <input type="text" id="searchBar" placeholder="Type to search...">
+    <div id="searchResults"></div>
+    <div id="optionsList" class="optionsList"></div>
+    <!-- <select id="strategyType">
+        <option value="spread">Bull Call</option>
+        <option value="ironCondor">Iron Condor</option>
+    </select> -->
+    <button id="addOption">Create Strategy</button>
+    <button id="runPrediction">Run Prediction</button>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./sockets/optionSocket.js"></script>
+</body>

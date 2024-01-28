@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Socket.IO Test</title>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+    </head>
+    <nav>
+        <ul>
+            <li><a href="probability.html" target="contentFrame">Probability</a></li>
+            <li><a href="strategy.html" target="contentFrame">Strategy</a></li>
+            <li><a href="options.html" target="contentFrame">Options</a></li>
+            <li><a href="bar.html" target="contentFrame">Bars</a></li>
+            <li><a href="dev.html" target="contentFrame">Develop</a></li>
+            <li><a href="ai.html" target="contentFrame">AI</a></li>
+
+            <li class="search-bar">
+                <input id="indexSearch" type="text" name="search" placeholder="Search Stock..."
+                    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            </li>
+        </ul>
+    </nav>
+    <div id="indexSearchResults" style="position: absolute; top: 50px; right: 10px;"></div>
+    <iframe id="contentFrame" name="contentFrame" style="width: 100%; height: 90vh; border: none;"></iframe>
+    <div id="content"></div>
+
+    <script> window.serverPath = "http://localhost:3000";</script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./tools/devScripter.js"></script>
+    <script src="./tools/indexSearch.js"></script>
+    <script src="./tools/htmlRouter.js"></script>
+
+</html>

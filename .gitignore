@@ -1,0 +1,6 @@
+json/bars.json
+json/bars2.json
+.env
+python/__pycache__
+models/model.pth
+node_modules
