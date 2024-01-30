@@ -188,6 +188,11 @@ socket.on('getProbability', (data) => {
     resultsDiv.innerHTML = ''
     let probContainer = document.createElement('div');
     probContainer.className = 'selectedStockText';
+    if(data.probType=="price") probContainer.innerHTML =
+    `Probability: ${data.probability}% <br>
+    Probability at expiration: ${data.probabilityExp}%<br>
+    diff: ${data.diff}%`;
+    
     if(data.probType=="outsideRange") probContainer.innerHTML = 
     `Probability: ${data.probability}% <br>
     Probability at expiration: ${data.probabilityExp}%<br>

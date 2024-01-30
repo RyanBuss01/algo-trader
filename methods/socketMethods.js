@@ -356,8 +356,10 @@ var socketMethods = {
         let period = data.period
 
         if(probType=='price') {
-        let guess = data.data[0], hits = 0, total = 0
-        let diff = tools.pDiff(close, guess)
+        let guess = data.data[0], hits = 0, hitsExp=0, total = 0
+        let diff = tools.pDiff(close, guess, true)
+        let isPositive = guess>close
+        if(isPositive) diff += 1
 
 
         for(let i=0; i<bars.length; i++) {
@@ -365,15 +367,22 @@ var socketMethods = {
             if(i>=bars.length-period) break
             total++
             let hit = true
-            for(let j=0 ; j<period; j++) {
-                let barDiff = tools.pDiff(bar.ClosePrice, diff>0? bars[i+j+1].HighPrice : diff<0 ? bars[i+j+1].LowPrice : bars[i+j+1].ClosePrice)
-                if(hit && ((diff>0 && barDiff>diff) || (diff<0 && barDiff<diff))) {hit=false; hits++}
+            for(let j=1 ; j<period; j++) {
+                const priceGoal = bar.ClosePrice*diff
+                if(hit && ((isPositive && priceGoal < bars[i+j].ClosePrice) || (!isPositive && priceGoal > bars[i+j].ClosePrice))) {hit=false; hits++}
+                if(j==period-1 && ((isPositive && bar.ClosePrice*diff > bars[i+j].ClosePrice) || (!isPositive && bar.ClosePrice*diff < bars[i+j].ClosePrice))) hitsExp++
             }
         }
 
         let prob =100*hits/total
-        prob = 100-prob
-        res = {prob: prob, diff: diff}
+        let probExp=100*hitsExp/total
+        res = {
+            probability: prob.toFixed(2), 
+            probabilityExp: probExp.toFixed(2),
+            diff: diff.toFixed(2), 
+            probType: probType,
+        }
+
         socket.emit('getProbability', res)
         }
 
@@ -381,7 +390,6 @@ var socketMethods = {
         if(probType == "outsideRange") {
             let low = Math.min(data.data[0], data.data[1]), high = Math.max(data.data[0], data.data[1])
             let closePrices = bars.map(b=>b.ClosePrice), upperDiff = tools.pDiff(close, high, true), lowerDiff = tools.pDiff(close, low, true)
-
             // Count how many times the price is outside the range
             let count = 0;
             // Count how many times the price is outside the range
@@ -390,7 +398,7 @@ var socketMethods = {
                 for(let i=0; i<period; i++) {
                     if(counted) continue;
                     if(index+i>=closePrices.length) break;
-                    if(closePrices[index+i] > price*1+upperDiff) count++, counted=true
+                    if(closePrices[index+i] > price*(1+upperDiff)) count++, counted=true
                     if(closePrices[index+i] < price*lowerDiff) count++, counted=true
                 }
             });
@@ -411,17 +419,13 @@ var socketMethods = {
          
              let validPeriods = closePrices.length - period + 1;
              let probabilityExp = (countExp / validPeriods) * 100;
-
-            let recentClosePrices = closePrices.slice(-20); // Last 'period' days
-            let volatility = tools.getStandardDeviation(recentClosePrices);
-
            
             let res = {
                 upperDiff: tools.pDiff(close, high),
                 lowerDiff: tools.pDiff(close, low),
                 probability: probabilityPrice.toFixed(2),
                 probabilityExp: probabilityExp.toFixed(2),
-                probType: probType
+                probType: probType,
             }
             socket.emit('getProbability', res)
         }
