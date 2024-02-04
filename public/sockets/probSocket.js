@@ -41,7 +41,7 @@ buildProbDiv = () => {
         probDiv.appendChild(periodInput);
         probDiv.appendChild(runButton);
     }
-    if(prob === 'outsideRange') {
+    if(prob === 'outsideRange' || prob === 'range') {
         let probContainer = document.createElement('div');
         probContainer.textContent = 'Price 1 Input: ';
         let priceInput = document.createElement('Input');
@@ -73,34 +73,6 @@ buildProbDiv = () => {
         probDiv.appendChild(periodInput);
         probDiv.appendChild(runButton);
     }
-    // if(prob === 'options') {
-    //     let probContainer = document.createElement('div');
-    //     probContainer.textContent = 'Option Input: ';
-    //     let optionInput = document.createElement('Input');
-    //     optionInput.setAttribute('type', 'number');
-    //     optionInput.setAttribute('id', 'optionInput');
-    //     optionInput.addEventListener('input', () => selectedData = optionInput.value);
-    //     let strikeInput = document.createElement('div');
-    //     strikeInput.textContent = 'Strike Price Input: ';
-    //     let strikeInputText = document.createElement('Input');
-    //     strikeInputText.setAttribute('type', 'number');
-    //     strikeInputText.setAttribute('id', 'strikeInput');
-    //     strikeInputText.addEventListener('input', () => strikeInputText.value);
-    //     let periodInputText = document.createElement('div');
-    //     periodInputText.textContent = 'Period Input: ';
-    //     let periodInput = document.createElement('Input');
-    //     periodInput.setAttribute('type', 'number');
-    //     periodInput.setAttribute('id', 'priceInput');
-    //     periodInput.addEventListener('input', () => period = periodInput.value);
-    //     let runButton = document.createElement('button');
-    //     runButton.textContent = 'Run';
-    //     runButton.addEventListener('click', () => runData());
-    //     probDiv.appendChild(probContainer);
-    //     probDiv.appendChild(optionInput);
-    //     probDiv.appendChild(periodInputText);
-    //     probDiv.appendChild(periodInput);
-    //     probDiv.appendChild(runButton);
-    // }
     
 }  
 
@@ -190,10 +162,17 @@ socket.on('getProbability', (data) => {
     probContainer.className = 'selectedStockText';
     if(data.probType=="price") probContainer.innerHTML =
     `Probability: ${data.probability}% <br>
+    Probability (High/low): ${data.probability}%<br>
     Probability at expiration: ${data.probabilityExp}%<br>
     diff: ${data.diff}%`;
     
     if(data.probType=="outsideRange") probContainer.innerHTML = 
+    `Probability: ${data.probability}% <br>
+    Probability at expiration: ${data.probabilityExp}%<br>
+    Range: +${data.upperDiff}% / ${data.lowerDiff}%`;
+    resultsDiv.appendChild(probContainer);
+
+    if(data.probType=="range") probContainer.innerHTML = 
     `Probability: ${data.probability}% <br>
     Probability at expiration: ${data.probabilityExp}%<br>
     Range: +${data.upperDiff}% / ${data.lowerDiff}%`;

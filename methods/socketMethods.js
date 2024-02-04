@@ -356,38 +356,47 @@ var socketMethods = {
         let period = data.period
 
         if(probType=='price') {
-        let guess = data.data[0], hits = 0, hitsExp=0, total = 0
+        let guess = data.data[0], hits = 0, hitsExp=0, hitsHL=0, total = 0
         let diff = tools.pDiff(close, guess, true)
         let isPositive = guess>close
-        if(isPositive) diff += 1
 
 
-        for(let i=0; i<bars.length; i++) {
-            let bar = bars[i]
-            if(i>=bars.length-period) break
-            total++
-            let hit = true
-            for(let j=1 ; j<period; j++) {
-                const priceGoal = bar.ClosePrice*diff
-                if(hit && ((isPositive && priceGoal < bars[i+j].ClosePrice) || (!isPositive && priceGoal > bars[i+j].ClosePrice))) {hit=false; hits++}
-                if(j==period-1 && ((isPositive && bar.ClosePrice*diff > bars[i+j].ClosePrice) || (!isPositive && bar.ClosePrice*diff < bars[i+j].ClosePrice))) hitsExp++
+        for (let i = 0; i <= bars.length - period; i++) {
+            total++;
+            let hit = false, hitHL=false;
+            for (let j = 1; j < period; j++) {
+                const priceGoal = isPositive ? bars[i].ClosePrice * (1 + diff) : bars[i].ClosePrice * diff; // Adjusted for both directions
+                if((isPositive && priceGoal < bars[i + j].ClosePrice) || (!isPositive && priceGoal > bars[i + j].ClosePrice)) {
+                    if(j == period - 1) hitsExp++;
+                    if(hit) continue;
+                    hits++;
+                    hit = true;
+                } else if((isPositive && priceGoal < bars[i + j].HighPrice) || (!isPositive && priceGoal > bars[i + j].LowPrice)) {
+                    if(hitHL) continue;
+                    hitsHL++;
+                    hitHL = true;
+
+                }
             }
         }
 
         let prob =100*hits/total
         let probExp=100*hitsExp/total
+        let probHL=100*hitsHL/total
         res = {
             probability: prob.toFixed(2), 
             probabilityExp: probExp.toFixed(2),
-            diff: diff.toFixed(2), 
+            probabilityHL: probHL.toFixed(2),
+            diff: isPositive ? (diff*100).toFixed(3) : (diff*100-100).toFixed(3), 
             probType: probType,
         }
 
         socket.emit('getProbability', res)
         }
 
+
         // Ensure the period is not longer than the array
-        if(probType == "outsideRange") {
+        if(probType == "outsideRange" || probType == "range") {
             let low = Math.min(data.data[0], data.data[1]), high = Math.max(data.data[0], data.data[1])
             let closePrices = bars.map(b=>b.ClosePrice), upperDiff = tools.pDiff(close, high, true), lowerDiff = tools.pDiff(close, low, true)
             // Count how many times the price is outside the range
@@ -398,8 +407,11 @@ var socketMethods = {
                 for(let i=0; i<period; i++) {
                     if(counted) continue;
                     if(index+i>=closePrices.length) break;
-                    if(closePrices[index+i] > price*(1+upperDiff)) count++, counted=true
-                    if(closePrices[index+i] < price*lowerDiff) count++, counted=true
+                    if(probType == "outsideRange"  && closePrices[index+i] > price*(1+upperDiff)) {count++, counted=true}
+                    if(probType == "outsideRange"  && closePrices[index+i] < price*lowerDiff) {count++, counted=true}
+                    if(probType == "range"  && closePrices[index+i] < price*(1+upperDiff)) {count++, counted=true}
+                    if(!counted && probType == "range"  && closePrices[index+i] > price*lowerDiff) {count++, counted=true}
+                    
                 }
             });
              // Calculate the probability
@@ -410,16 +422,14 @@ var socketMethods = {
              let countExp = 0;
     
              for (let index = 0; index <= closePrices.length - period; index++) {
-                let i = period-1
-                let price = closePrices[index];
-                 if (closePrices[index+i] > price*1+upperDiff || closePrices[index+i] < price*lowerDiff) {
-                     countExp++;
-                 }
+                let price = closePrices[index], closeExp = closePrices[index+(period-1)];
+                 if (probType=='outsideRange' && (closeExp > price*(1+upperDiff) || closeExp < price*lowerDiff)) countExp++;
+                 else if(probType=='range' && (closeExp < price*(1+upperDiff) || closeExp > price*lowerDiff)) countExp++;
              }
          
              let validPeriods = closePrices.length - period + 1;
              let probabilityExp = (countExp / validPeriods) * 100;
-           
+
             let res = {
                 upperDiff: tools.pDiff(close, high),
                 lowerDiff: tools.pDiff(close, low),
