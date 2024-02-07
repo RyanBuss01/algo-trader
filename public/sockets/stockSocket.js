@@ -9,10 +9,8 @@ window.onload = function() {
     var ticker = getQueryParam('ticker');
 
     if (ticker) {
-        // Run your script with the ticker
-        // For example, display it in stockDetailsContainer
-        document.getElementById('stockDetailsContainer').textContent = 'Details for stock: ' + ticker;
-
+        document.getElementById('stockContainer').textContent = 'Details for stock: ' + ticker;
+        
         // Here, you can add more logic or call other functions based on the ticker
     }
 };
