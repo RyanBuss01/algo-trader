@@ -286,6 +286,15 @@ title {
 }
 
 
+.stock-name {
+    font-size: large;
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+
 #probSelect {
     width: 150px;      /* Adjust the width as needed */
     height: 30px;      /* Adjust the height as needed */
@@ -294,4 +303,18 @@ title {
     border: 1px solid #ccc; /* Optional: adds a border */
     border-radius: 4px;
     background-color: darkgray;
+}
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey background */
+    border-top: 16px solid #3498db; /* Blue color */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

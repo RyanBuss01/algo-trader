@@ -14,6 +14,7 @@ var socketRoutes = (socket) => {
     socket.on('searchTicker', (data) => socketMethods.searchTicker(socket, data))
     socket.on('getProbStockData', (data) => socketMethods.getProbStockData(socket, data))
     socket.on('getProbability', (data) => socketMethods.getProbability(socket, data))
+    socket.on('getStockData-ai', (data) => socketMethods.getStockAiData(socket, data))
 
     socket.on('disconnect', () => console.log('Client disconnected'));
 }

@@ -442,7 +442,9 @@ var socketMethods = {
 
     },
 
-    predictOption: function (socket, data) {
+    predictOption: function (socket, data) {},
+
+    getStockAiData: function (socket, ticker) {
         
     }
 }

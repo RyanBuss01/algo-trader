@@ -6,6 +6,7 @@ let currentDisplayedItem = null;
 let selectedStock = null
 
 let searchResultClick = (ticker) => {
+    selctedStockDiv.innerHTML =  '';
     searchBar.value = '';
     resultsContainer.innerHTML = '';
     selectedStock = ticker
@@ -18,7 +19,13 @@ let build = () => {
     }
     else {
         let stockName = document.createElement('div')
+        stockName.classList.add('stock-name')
+        stockName.textContent = selectedStock
+        let loader = document.createElement('div')
+        loader.classList.add('loader')
         selctedStockDiv.appendChild(stockName)
+        selctedStockDiv.appendChild(loader)
+        socket.emit('getStockData-ai', selectedStock)
     }
 
 }
