@@ -446,6 +446,7 @@ var socketMethods = {
 
     getStockAiData: function (socket, ticker) {
         
+
     }
 }
 
