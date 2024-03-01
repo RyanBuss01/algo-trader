@@ -241,6 +241,19 @@ var tools = {
     
         return  json;
       },
+
+      kellyCriterionOptions: function (prob, profit, loss) {
+        // Calculate the probability
+        let p = prob / 100;
+        // Calculate the win/loss ratio
+        let ratio = (prob) / (100-prob);
+        // Calculate the Kelly fraction
+        let kelly = p - ((1-p)/r)
+
+        
+        console.log(`Allocate ${Math.round(kelly * 100)}% of your portfolio to this trade.`);
+        return kelly;
+    }
 }
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {

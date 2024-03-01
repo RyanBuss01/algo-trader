@@ -73,6 +73,40 @@ buildProbDiv = () => {
         probDiv.appendChild(periodInput);
         probDiv.appendChild(runButton);
     }
+    if(prob === 'kelly') {
+        let deltaContainer = document.createElement('div');
+        deltaContainer.textContent = 'Delta Input:';
+        let deltaInput = document.createElement('Input');
+        deltaInput.setAttribute('type', 'number');
+        deltaInput.setAttribute('id', 'priceInput');
+        deltaInput.addEventListener('input', () => selectedData[0] = deltaInput.value);
+
+        let gainContainer = document.createElement('div');
+        gainContainer.textContent = 'Max Gain Input: ';
+        let gainInput = document.createElement('Input');
+        gainInput.setAttribute('type', 'number');
+        gainInput.setAttribute('id', 'priceInput');
+        gainInput.addEventListener('input', () => selectedData[1] = gainInput.value);
+
+        let lossContainer = document.createElement('div');
+        lossContainer.textContent = 'Max Gain Input: ';
+        let lossInput = document.createElement('Input');
+        lossInput.setAttribute('type', 'number');
+        lossInput.setAttribute('id', 'priceInput');
+        lossInput.addEventListener('input', () => selectedData[2] = lossInput.value);
+
+        let runButton = document.createElement('button');
+        runButton.textContent = 'Run';
+        runButton.addEventListener('click', () => runData());
+
+        probDiv.appendChild(deltaContainer);
+        probDiv.appendChild(deltaInput);
+        probDiv.appendChild(gainContainer);
+        probDiv.appendChild(gainInput);
+        probDiv.appendChild(lossContainer);
+        probDiv.appendChild(lossInput);
+        probDiv.appendChild(runButton);
+    }
     
 }  
 
@@ -173,6 +207,12 @@ socket.on('getProbability', (data) => {
     resultsDiv.appendChild(probContainer);
 
     if(data.probType=="range") probContainer.innerHTML = 
+    `Probability: ${data.probability}% <br>
+    Probability at expiration: ${data.probabilityExp}%<br>
+    Range: +${data.upperDiff}% / ${data.lowerDiff}%`;
+    resultsDiv.appendChild(probContainer);
+
+    if(data.probType=="kelly") probContainer.innerHTML = 
     `Probability: ${data.probability}% <br>
     Probability at expiration: ${data.probabilityExp}%<br>
     Range: +${data.upperDiff}% / ${data.lowerDiff}%`;

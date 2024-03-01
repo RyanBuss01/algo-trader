@@ -9,6 +9,7 @@ const path = require('path');
 const fs = require('fs');
 let fullBars = require('../json/bars.json');
 const fullBars2 = require('../json/bars2.json');
+const { max } = require('moment');
 fullBars.push(...fullBars2)
 
 const indicatorsFilePath = path.join(__dirname, '../methods/indicators.js');
@@ -439,6 +440,16 @@ var socketMethods = {
             }
             socket.emit('getProbability', res)
         }
+
+        if(probType == "kelly") {
+            prob = data.data[0];
+            maxGain = data.data[1];
+            maxLoss = data.data[2];
+
+            tools.kellyCriterionOptions(prob, maxGain, maxLoss)
+            
+        }
+
 
     },
 
