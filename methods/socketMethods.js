@@ -458,6 +458,12 @@ var socketMethods = {
     getStockAiData: function (socket, ticker) {
         
 
+    },
+
+    getStockPageData: function (socket, ticker) {
+        let bars = fullBars.filter(b=>b.ticker==ticker)[0].bars
+        socket.emit('getStockPageData', bars)
+    
     }
 }
 
